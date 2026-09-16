@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var CCL_PROGRAM = "mrd_lookahead_new_report:group1";
+    var CCL_PROGRAM = "mrd_lookahead_new_report";
     var allCycles = [];
     var currentSort = {
         key: "name",
@@ -127,16 +127,22 @@
     }
 
     function launchAppointmentDetails(cycle) {
-        var schEventId = normalizeId(cycle.schEventId);
-        var scheduleId = normalizeId(cycle.scheduleId);
+    var schEventId = normalizeId(cycle.schEventId);
+    var scheduleId = normalizeId(cycle.scheduleId);
 
-        if (typeof ShowHistoryView !== "function") {
-            setMessage("Appointment details are available only inside PowerChart.", "error");
-            return;
-        }
-
-        ShowHistoryView(schEventId, scheduleId);
+    if (typeof MPAGES_EVENT !== "function") {
+        setMessage(
+            "Appointment details are available only inside PowerChart.",
+            "error"
+        );
+        return;
     }
+
+    MPAGES_EVENT(
+        "EVENT",
+        "ShowHistoryView(" + schEventId + "," + scheduleId + ")"
+    );
+}
 
     function renderRows(cycles) {
         tableBody.textContent = "";
