@@ -454,9 +454,18 @@
         return true;
     }
 
-    function loadCycles() {
-        
-      
+    function scheduleNextAutoRefresh() {
+    if (autoRefreshTimer) {
+        clearTimeout(autoRefreshTimer);
+    }
+
+    autoRefreshTimer = setTimeout(function () {
+        loadCycles();
+    }, AUTO_REFRESH_INTERVAL);
+}
+
+
+function loadCycles() {
     if (autoRefreshTimer) {
         clearTimeout(autoRefreshTimer);
         autoRefreshTimer = null;
@@ -468,84 +477,91 @@
 
     setLoading(true);
 
-    // Keep the remainder of your existing function unchanged.
-        
-        if (!validateDateRange()) {
+    dateRangeLabel.textContent =
+        displayInputDate(startDate.value) +
+        " – " +
+        displayInputDate(endDate.value);
+
+    if (typeof XMLCclRequest !== "function") {
+        setLoading(false);
+
+        setMessage(
+            "The CCL request can be run only inside the Cerner MPage environment.",
+            "error"
+        );
+
+        renderRows([]);
+        scheduleNextAutoRefresh();
+        return;
+    }
+
+    var request = new XMLCclRequest();
+
+    request.onreadystatechange = function () {
+        if (request.readyState !== 4) {
             return;
         }
 
-        setLoading(true);
-        dateRangeLabel.textContent = displayInputDate(startDate.value) + " – " + displayInputDate(endDate.value);
+        setLoading(false);
+        scheduleNextAutoRefresh();
 
-        if (typeof XMLCclRequest !== "function") {
-            setLoading(false);
-            scheduleNextAutoRefresh();
-            setMessage("The CCL request can be run only inside the Cerner MPage environment.", "error");
+        if (request.status !== 200) {
+            setMessage(
+                "Unable to load the pending cycles. Please try again.",
+                "error"
+            );
+
             renderRows([]);
             return;
         }
 
-        var request = new XMLCclRequest();
-        request.onreadystatechange = function () {
-            if (request.readyState !== 4) {
-                return;
-            }
-
-            setLoading(false);
-            scheduleNextAutoRefresh();
-            if (request.status !== 200) {
-                setMessage("Unable to load the pending cycles. Please try again.", "error");
-                renderRows([]);
-                return;
-            }
-
-            try {
-        var reply =
-            extractReply(request.responseText);
+        try {
+            var reply = extractReply(request.responseText);
 
             allCycles = asArray(
-            reply.cycle || reply.CYCLE
-    );
+                reply.cycle || reply.CYCLE
+            );
 
             populateProviderDropdown(
-            reply.provider || reply.PROVIDER,
-            reply.loggedInUser ||
-            reply.LOGGED_IN_USER
-    );
+                reply.provider || reply.PROVIDER,
+                reply.loggedInUser ||
+                reply.LOGGED_IN_USER
+            );
 
             setMessage("", "");
             filterRows();
             updateLastRefreshedTime();
 
-        function scheduleNextAutoRefresh() {
-    if (autoRefreshTimer) {
-        clearTimeout(autoRefreshTimer);
-    }
+        } catch (error) {
+            console.error(
+                "Unable to read pending-cycle data:",
+                error
+            );
 
-    autoRefreshTimer = setTimeout(function () {
-        loadCycles();
-    }, AUTO_REFRESH_INTERVAL);
-}
-            
-            
-            } catch (error) {
-                setMessage("The pending-cycle data could not be read.", "error");
-                renderRows([]);
-            }
-        };
+            setMessage(
+                "The pending-cycle data could not be read.",
+                "error"
+            );
 
-        request.open("GET", CCL_PROGRAM, true);
-        
-        request.send(
-                "^MINE^,^" +
-                toCclDate(startDate.value) +
-                "^,^" +
-                toCclDate(endDate.value) +
-                "^," +
-                (providerSelect.value || "0")
+            renderRows([]);
+        }
+    };
+
+    request.open(
+        "GET",
+        CCL_PROGRAM,
+        true
     );
-    }
 
+    request.send(
+        "^MINE^,^" +
+        toCclDate(startDate.value) +
+        "^,^" +
+        toCclDate(endDate.value) +
+        "^," +
+        (providerSelect.value || "0")
+    );
+}
     searchBox.addEventListener("input", filterRows);
     applyButton.addEventListener("click", loadCycles);
     refreshButton.addEventListener("click", loadCycles);
