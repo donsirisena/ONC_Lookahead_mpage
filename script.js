@@ -18,6 +18,8 @@
     var message = document.getElementById("message");
     var resultCount = document.getElementById("resultCount");
     var dateRangeLabel = document.getElementById("dateRangeLabel");
+    var providerSelect = document.getElementById("providerSelect");
+
 
     function pad(value) {
         return value < 10 ? "0" + value : String(value);
@@ -131,34 +133,19 @@
         normalizeId(cycle.schEventId)
     );
 
-   var schEventId = Number(
-    normalizeId(
-        cycle.schEventId ||
-        cycle.scheventId ||
-        cycle.scheventid
-    )
-);
-
-var scheduleId = Number(
-    normalizeId(
-        cycle.scheduleId ||
-        cycle.scheduledId ||
-        cycle.scheduleid ||
-        cycle.scheduledid
-    )
-);
-
-    if (!schEventId || !scheduleId) {
-    setMessage(
-        "schEventId: " + cycle.schEventId +
-        " | scheventId: " + cycle.scheventId +
-        " | scheduleId: " + cycle.scheduleId +
-        " | scheduledId: " + cycle.scheduledId,
-        "error"
+    var scheduleId = Number(
+        normalizeId(
+            cycle.scheduleId || cycle.scheduledId
+        )
     );
 
-    return;
-}
+    if (!schEventId || !scheduleId) {
+        setMessage(
+            "Missing appointment identifiers.",
+            "error"
+        );
+        return;
+    }
 
     try {
         var schedulingActions =
@@ -365,13 +352,76 @@ var scheduleId = Number(
         });
     }
 
-    function extractCycles(responseText) {
-        var parsed = JSON.parse(responseText);
-        var reply = parsed.reply || parsed.REPLY || {};
-        var cycles = reply.cycle || reply.CYCLE || [];
+    function extractReply(responseText) {
+    var parsed = JSON.parse(responseText);
 
-        return Array.isArray(cycles) ? cycles : [cycles];
+        return parsed.reply || parsed.REPLY || {};
     }
+
+    function asArray(value) {
+        if (!value) {
+        return [];
+    }
+
+        return Array.isArray(value) ? value : [value];
+    }
+
+    function populateProviderDropdown(
+    providers,
+    loggedInUser
+) {
+    var selectedValue =
+        providerSelect.value || "0";
+
+    var providerList =
+        asArray(providers);
+
+    providerSelect.textContent = "";
+
+    var myPatientsOption =
+        document.createElement("option");
+
+    myPatientsOption.value = "0";
+
+    myPatientsOption.textContent =
+        loggedInUser
+            ? "My Patients (" + loggedInUser + ")"
+            : "My Patients";
+
+    providerSelect.appendChild(
+        myPatientsOption
+    );
+
+    providerList.forEach(function (provider) {
+        var option =
+            document.createElement("option");
+
+        option.value = normalizeId(
+            provider.personId ||
+            provider.providerId
+        );
+
+        option.textContent =
+            provider.name ||
+            provider.providerName ||
+            "";
+
+        providerSelect.appendChild(option);
+    });
+
+    var previousOption =
+        providerSelect.querySelector(
+            'option[value="' +
+            selectedValue +
+            '"]'
+        );
+
+    if (previousOption) {
+        providerSelect.value =
+            selectedValue;
+        }
+    }
+
 
     function validateDateRange() {
         if (!startDate.value || !endDate.value) {
@@ -417,9 +467,22 @@ var scheduleId = Number(
             }
 
             try {
-                allCycles = extractCycles(request.responseText);
-                setMessage("", "");
-                filterRows();
+        var reply =
+            extractReply(request.responseText);
+
+            allCycles = asArray(
+            reply.cycle || reply.CYCLE
+    );
+
+            populateProviderDropdown(
+            reply.provider || reply.PROVIDER,
+            reply.loggedInUser ||
+            reply.LOGGED_IN_USER
+    );
+
+            setMessage("", "");
+            filterRows();
+
             } catch (error) {
                 setMessage("The pending-cycle data could not be read.", "error");
                 renderRows([]);
@@ -427,14 +490,21 @@ var scheduleId = Number(
         };
 
         request.open("GET", CCL_PROGRAM, true);
+        
         request.send(
-            "^MINE^,^" + toCclDate(startDate.value) + "^,^" + toCclDate(endDate.value) + "^"
-        );
+                "^MINE^,^" +
+                toCclDate(startDate.value) +
+                "^,^" +
+                toCclDate(endDate.value) +
+                "^," +
+                (providerSelect.value || "0")
+    );
     }
 
     searchBox.addEventListener("input", filterRows);
     applyButton.addEventListener("click", loadCycles);
     refreshButton.addEventListener("click", loadCycles);
+    providerSelect.addEventListener("change", loadCycles);
 
     initializeSorting();
     initializeColumnResizing();
