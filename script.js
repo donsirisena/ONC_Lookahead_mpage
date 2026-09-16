@@ -131,19 +131,34 @@
         normalizeId(cycle.schEventId)
     );
 
-    var scheduleId = Number(
-        normalizeId(
-            cycle.scheduleId || cycle.scheduledId
-        )
-    );
+   var schEventId = Number(
+    normalizeId(
+        cycle.schEventId ||
+        cycle.scheventId ||
+        cycle.scheventid
+    )
+);
+
+var scheduleId = Number(
+    normalizeId(
+        cycle.scheduleId ||
+        cycle.scheduledId ||
+        cycle.scheduleid ||
+        cycle.scheduledid
+    )
+);
 
     if (!schEventId || !scheduleId) {
-        setMessage(
-            "Missing appointment identifiers.",
-            "error"
-        );
-        return;
-    }
+    setMessage(
+        "schEventId: " + cycle.schEventId +
+        " | scheventId: " + cycle.scheventId +
+        " | scheduleId: " + cycle.scheduleId +
+        " | scheduledId: " + cycle.scheduledId,
+        "error"
+    );
+
+    return;
+}
 
     try {
         var schedulingActions =
