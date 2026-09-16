@@ -78,7 +78,8 @@ body {
     color: #37474f;
 }
 
-.toolbar input {
+.toolbar input,
+.toolbar select {
     height: 36px;
     padding: 9px 11px;
     border: 1px solid #b8c4ce;
@@ -91,7 +92,8 @@ body {
 .search-field input { min-width: 300px; }
 .toolbar input[type="date"] { min-width: 150px; }
 
-.toolbar input:focus {
+.toolbar input:focus,
+.toolbar select:focus {
     outline: none;
     border-color: #2f75b5;
     box-shadow: 0 0 0 2px rgba(47, 117, 181, 0.15);
@@ -102,6 +104,11 @@ body {
     align-items: flex-end;
     gap: 10px;
     flex-wrap: wrap;
+}
+
+.physician-field select {
+    min-width: 210px;
+    max-width: 280px;
 }
 
 /* TOOLBAR BUTTONS */
