@@ -126,28 +126,48 @@
         );
     }
 
-    function launchAppointmentDetails(cycle) {
-    var schEventId = normalizeId(cycle.schEventId);
-
-    var scheduleId = normalizeId(
-        cycle.scheduleId);
-
-    setMessage(
-        "Opening appointment: Event " +
-        schEventId +
-        ", Schedule " +
-        scheduleId,
-        "loading"
+    async function launchAppointmentDetails(cycle) {
+    var schEventId = Number(
+        normalizeId(cycle.schEventId)
     );
 
-    MPAGES_EVENT(
-        "EVENT",
-        "ShowHistoryView(" +
-        schEventId +
-        "," +
-        scheduleId +
-        ")"
+    var scheduleId = Number(
+        normalizeId(
+            cycle.scheduleId || cycle.scheduledId
+        )
     );
+
+    if (!schEventId || !scheduleId) {
+        setMessage(
+            "Missing appointment identifiers.",
+            "error"
+        );
+        return;
+    }
+
+    try {
+        var schedulingActions =
+            await window.external.DiscernObjectFactory(
+                "PEXSCHEDULINGACTIONS"
+            );
+
+        schedulingActions.ShowHistoryView(
+            schEventId,
+            scheduleId
+        );
+
+        setMessage("", "");
+    } catch (error) {
+        console.error(
+            "Unable to open Appointment History View:",
+            error
+        );
+
+        setMessage(
+            "Unable to open Appointment History View.",
+            "error"
+        );
+    }
 }
 
     function renderRows(cycles) {
