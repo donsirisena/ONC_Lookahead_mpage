@@ -8,6 +8,9 @@
         direction: "asc"
     };
 
+    var AUTO_REFRESH_INTERVAL = 60000;
+    var autoRefreshTimer = null;
+
     var searchBox = document.getElementById("searchBox");
     var startDate = document.getElementById("startDate");
     var endDate = document.getElementById("endDate");
@@ -19,6 +22,20 @@
     var resultCount = document.getElementById("resultCount");
     var dateRangeLabel = document.getElementById("dateRangeLabel");
     var providerSelect = document.getElementById("providerSelect");
+
+    var lastRefreshed = document.getElementById("lastRefreshed");
+
+    function updateLastRefreshedTime() {
+    var now = new Date();
+
+    lastRefreshed.textContent =
+        "Last refreshed: " +
+        now.toLocaleTimeString("en-CA", {
+            hour: "numeric",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+    }
 
 
     function pad(value) {
@@ -482,7 +499,24 @@
 
             setMessage("", "");
             filterRows();
+            updateLastRefreshedTime();
 
+        function startAutoRefresh() {
+            if (autoRefreshTimer) {
+            clearInterval(autoRefreshTimer);
+        }
+
+        autoRefreshTimer = setInterval(function () {
+            if (
+            !applyButton.disabled &&
+            document.visibilityState !== "hidden"
+            ) {
+            loadCycles();
+            }
+        }, AUTO_REFRESH_INTERVAL);
+            } 
+            
+            
             } catch (error) {
                 setMessage("The pending-cycle data could not be read.", "error");
                 renderRows([]);
@@ -510,4 +544,5 @@
     initializeColumnResizing();
     setDefaultDateRange();
     loadCycles();
+    startAutoRefresh();
 }());
