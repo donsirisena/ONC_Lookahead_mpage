@@ -128,13 +128,27 @@
 
     function launchAppointmentDetails(cycle) {
     var schEventId = normalizeId(cycle.schEventId);
-    var scheduleId = normalizeId(cycle.scheduledId);
+
+    var scheduleId = normalizeId(
+        cycle.scheduleId);
+
+    setMessage(
+        "Opening appointment: Event " +
+        schEventId +
+        ", Schedule " +
+        scheduleId,
+        "loading"
+    );
 
     MPAGES_EVENT(
         "EVENT",
-        "ShowHistoryView(" + schEventId + "," + scheduleId + ")"
+        "ShowHistoryView(" +
+        schEventId +
+        "," +
+        scheduleId +
+        ")"
     );
-    }
+}
 
     function renderRows(cycles) {
         tableBody.textContent = "";
