@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var CCL_PROGRAM = "mrd_lookahead_new_report";
+    var CCL_PROGRAM = "mrd_lookahead_new_report:group1";
     var allCycles = [];
     var currentSort = {
         key: "name",
