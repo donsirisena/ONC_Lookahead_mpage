@@ -337,3 +337,20 @@ tbody tr:hover { background-color: #e6f1fa; }
         min-width: 0;
     }
 }
+.refresh-summary {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+#lastRefreshed {
+    white-space: nowrap;
+}
+
+@media (max-width: 920px) {
+    .refresh-summary {
+        align-items: flex-end;
+        flex-direction: column;
+        gap: 3px;
+    }
+}
