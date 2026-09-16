@@ -455,6 +455,22 @@
     }
 
     function loadCycles() {
+        
+        function loadCycles() {
+
+    if (autoRefreshTimer) {
+        clearTimeout(autoRefreshTimer);
+        autoRefreshTimer = null;
+    }
+
+    if (!validateDateRange()) {
+        return;
+    }
+
+    setLoading(true);
+
+    // Keep the remainder of your existing function unchanged.
+        
         if (!validateDateRange()) {
             return;
         }
@@ -464,6 +480,7 @@
 
         if (typeof XMLCclRequest !== "function") {
             setLoading(false);
+            scheduleNextAutoRefresh();
             setMessage("The CCL request can be run only inside the Cerner MPage environment.", "error");
             renderRows([]);
             return;
@@ -476,7 +493,7 @@
             }
 
             setLoading(false);
-
+            scheduleNextAutoRefresh();
             if (request.status !== 200) {
                 setMessage("Unable to load the pending cycles. Please try again.", "error");
                 renderRows([]);
@@ -501,20 +518,15 @@
             filterRows();
             updateLastRefreshedTime();
 
-        function startAutoRefresh() {
-            if (autoRefreshTimer) {
-            clearInterval(autoRefreshTimer);
-        }
+        function scheduleNextAutoRefresh() {
+    if (autoRefreshTimer) {
+        clearTimeout(autoRefreshTimer);
+    }
 
-        autoRefreshTimer = setInterval(function () {
-            if (
-            !applyButton.disabled &&
-            document.visibilityState !== "hidden"
-            ) {
-            loadCycles();
-            }
-        }, AUTO_REFRESH_INTERVAL);
-            } 
+    autoRefreshTimer = setTimeout(function () {
+        loadCycles();
+    }, AUTO_REFRESH_INTERVAL);
+}
             
             
             } catch (error) {
@@ -544,5 +556,5 @@
     initializeColumnResizing();
     setDefaultDateRange();
     loadCycles();
-    startAutoRefresh();
+    
 }());
