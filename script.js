@@ -8,7 +8,7 @@
         direction: "asc"
     };
 
-    var AUTO_REFRESH_INTERVAL = 10000;
+    var AUTO_REFRESH_INTERVAL = 60000;
     var autoRefreshTimer = null;
 
     var searchBox = document.getElementById("searchBox");
