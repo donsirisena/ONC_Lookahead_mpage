@@ -169,8 +169,13 @@
         return;
     }
 
-APPLINK(0,"$APP_APPNAME$","/PERSONID=" + personId + /ENCNTRID=" + encntrId + /FIRSTTAB=^PowerOrders+^"
-        );
+APPLINK(
+    0,
+    "$APP_APPNAME$",
+    "/PERSONID=" + personId +
+    " /ENCNTRID=" + encntrId +
+    " /FIRSTTAB=^PowerOrders+^"
+);
     }
 
 
