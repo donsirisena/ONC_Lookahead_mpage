@@ -171,7 +171,7 @@
 
 APPLINK(
     0,
-    "$APP_APPNAME$",
+    "Powerchart.exe",
     "/PERSONID=" + personId +
     " /ENCNTRID=" + encntrId +
     " /FIRSTTAB=^PowerOrders+^"
