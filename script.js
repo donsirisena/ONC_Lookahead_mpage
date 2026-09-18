@@ -145,6 +145,40 @@
         );
     }
 
+    function launchPatientOrders(cycle) {
+    var personId = normalizeId(cycle.personId);
+    var encntrId = normalizeId(cycle.encntrId);
+
+    if (!personId || personId === "0" ||
+        !encntrId || encntrId === "0") {
+
+        setMessage(
+            "Missing patient or encounter identifier.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (typeof APPLINK !== "function") {
+        setMessage(
+            "PowerOrders is available only inside PowerChart.",
+            "error"
+        );
+
+        return;
+    }
+
+    APPLINK(
+        0,
+        "$APP_APPNAME$",
+        "/PERSONID=" + personId +
+        " /ENCNTRID=" + encntrId +
+        " /FIRSTTAB=^PowerOrders^"
+    );
+}
+
+
     async function launchAppointmentDetails(cycle) {
     var schEventId = Number(
         normalizeId(cycle.schEventId)
@@ -199,7 +233,8 @@
                 launchPatientChart(cycle);
             });
             createCell(row, cycle.mrn);
-            createCell(row, cycle.regimenName, "regimen-cell");
+            createLinkCell(row, cycle.regimenName, function () {launchPatientOrders(cycle);
+            });
             createCell(row, cycle.cycleDisplay);
             createCell(row, cycle.effectiveStartDate, "date-cell");
             createLinkCell(row, cycle.appointmentType, function () {
