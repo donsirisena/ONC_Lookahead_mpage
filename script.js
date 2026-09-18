@@ -174,7 +174,7 @@ APPLINK(
     "Powerchart.exe",
     "/PERSONID=" + personId +
     " /ENCNTRID=" + encntrId +
-    " /FIRSTTAB=^PowerOrders+^"
+    " /FIRSTTAB=^Orders+^"
 );
     }
 
