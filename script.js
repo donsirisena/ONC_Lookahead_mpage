@@ -169,15 +169,47 @@
         return;
     }
 
-APPLINK(
+    APPLINK(
     0,
     "Powerchart.exe",
     "/PERSONID=" + personId +
     " /ENCNTRID=" + encntrId +
     " /FIRSTTAB=^Orders^"
 );
+}
+
+function launchPatientschedule(cycle) {
+    var personId = normalizeId(cycle.personId);
+    var encntrId = normalizeId(cycle.encntrId);
+
+    if (!personId || personId === "0" ||
+        !encntrId || encntrId === "0") {
+
+        setMessage(
+            "Missing patient or encounter identifier.",
+            "error"
+        );
+
+        return;
     }
 
+    if (typeof APPLINK !== "function") {
+        setMessage(
+            "ONC Pt Schedule is available only inside PowerChart.",
+            "error"
+        );
+
+        return;
+    }
+
+APPLINK(
+    0,
+    "Powerchart.exe",
+    "/PERSONID=" + personId +
+    " /ENCNTRID=" + encntrId +
+    " /FIRSTTAB=^ONC Pt Schedule^"
+);
+    }
 
     async function launchAppointmentDetails(cycle) {
     var schEventId = Number(
@@ -236,7 +268,10 @@ APPLINK(
             createLinkCell(row, cycle.regimenName, function () {launchPatientOrders(cycle);
             });
             createCell(row, cycle.cycleDisplay);
-            createCell(row, cycle.effectiveStartDate, "date-cell");
+            createLinkCell(row, cycle.effectiveStartDate, function () {
+            launchPatientschedule(cycle);
+            });
+
             createLinkCell(row, cycle.appointmentType, function () {
                 launchAppointmentDetails(cycle);
             });
