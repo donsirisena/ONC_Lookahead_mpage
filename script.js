@@ -628,7 +628,7 @@ function loadCycles() {
         "^MINE^,^" +
         toCclDate(startDate.value) +
         "^,^" +
-        toCclDate(endDate.value) +
+        toCclDate(endDate.value) + " 23:59:59" +
         "^," +
         (providerSelect.value || "0")
     );
