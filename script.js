@@ -265,9 +265,10 @@ APPLINK(
                 launchPatientChart(cycle);
             });
             createCell(row, cycle.mrn);
-            createLinkCell(row, cycle.regimenName, function () {launchPatientOrders(cycle);
+            createCell(row, cycle.regimenName);
+            createLinkCell(row, cycle.cycleDisplay, function () {
+                launchPatientOrders(cycle);
             });
-            createCell(row, cycle.cycleDisplay);
             createLinkCell(row, cycle.effectiveStartDate, function () {
             launchPatientschedule(cycle);
             });
