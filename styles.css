@@ -20,7 +20,7 @@ body {
 .page-header {
     background: linear-gradient(90deg, #1f4e79, #2f75b5);
     color: white;
-    padding: 16px 22px;
+    padding: 8px 22px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
     display: flex;
     align-items: center;
@@ -28,14 +28,8 @@ body {
     flex-shrink: 0;
 }
 
-.page-header h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-}
-
 .page-header p {
-    margin: 4px 0 0;
+    margin: 0;
     color: #dceaf7;
     font-size: 13px;
 }
