@@ -20,7 +20,7 @@ body {
 .page-header {
     background: linear-gradient(90deg, #1f4e79, #2f75b5);
     color: white;
-    padding: 8px 22px;
+    padding: 5px 22px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
     display: flex;
     align-items: center;
@@ -28,10 +28,16 @@ body {
     flex-shrink: 0;
 }
 
+/* Hide the old title when this stylesheet is paired with older page HTML. */
+.page-header h1 {
+    display: none;
+}
+
 .page-header p {
     margin: 0;
     color: #dceaf7;
     font-size: 13px;
+    line-height: 18px;
 }
 
 /* MAIN CONTENT */
