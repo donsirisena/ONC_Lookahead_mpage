@@ -306,16 +306,20 @@ APPLINK(
             NOV: 10,
             DEC: 11
         };
-        var parts = String(value || "").toUpperCase().split("-");
+        var parts = String(value || "").toUpperCase().trim().match(
+            /^(\d{4})-([A-Z]{3})-(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?$/
+        );
 
-        if (parts.length !== 3 || months[parts[1]] === undefined) {
+        if (!parts || months[parts[2]] === undefined) {
             return 0;
         }
 
         return new Date(
-            Number(parts[0]),
-            months[parts[1]],
-            Number(parts[2])
+            Number(parts[1]),
+            months[parts[2]],
+            Number(parts[3]),
+            Number(parts[4] || 0),
+            Number(parts[5] || 0)
         ).getTime();
     }
 
