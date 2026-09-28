@@ -354,3 +354,25 @@ tbody tr:hover { background-color: #e6f1fa; }
         gap: 3px;
     }
 }
+#message.loading-pulse {
+    color: #c62828;
+    font-weight: 600;
+    animation: loadingPulse 1.1s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #message.loading-pulse {
+        animation: none;
+    }
+}
