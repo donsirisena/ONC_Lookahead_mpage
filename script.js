@@ -84,18 +84,17 @@
         message.className = text ? "message " + type : "message";
     }
 
-function setLoading(isLoading) {
+    function setLoading(isLoading) {
     applyButton.disabled = isLoading;
     refreshButton.disabled = isLoading;
     providerSelect.disabled = isLoading;
 
     if (isLoading) {
-        setMessage("Loading pending cycles...", "info");
         message.classList.add("loading-pulse");
     } else {
         message.classList.remove("loading-pulse");
     }
-}
+    }
 
     function normalizeId(value) {
         if (value === null || value === undefined || value === "") {
@@ -554,6 +553,7 @@ function loadCycles() {
         return;
     }
 
+    setMessage("Loading pending cycles...", "info");
     setLoading(true);
 
     dateRangeLabel.textContent =
